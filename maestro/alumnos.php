@@ -16,7 +16,7 @@ $alumnos = sqlsrv_query($conn, "SELECT * FROM usuarios WHERE rol='alumno'");
 <body>
 <div class="container mt-4">
 <h2>Alumnos</h2>
-<a href="alumno_agregar.php" class="btn btn-success mb-3">+ Agregar Alumno</a>
+<a href="alumnos_agregar.php" class="btn btn-success mb-3">+ Agregar Alumno</a>
 <table class="table table-bordered">
 <thead>
 <tr>

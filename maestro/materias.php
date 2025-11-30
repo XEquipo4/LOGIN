@@ -39,7 +39,7 @@ $materias = sqlsrv_query($conn, "SELECT * FROM materias");
 <?php endwhile; ?>
 </tbody>
 </table>
-<a href="crear_materia.php" class="btn btn-primary">+ Crear Materia</a>
+<a href="asignar_materia.php" class="btn btn-primary">+ Crear Materia</a>
 </div>
 </body>
 </html>
