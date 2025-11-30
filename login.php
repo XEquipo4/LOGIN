@@ -1,38 +1,57 @@
 <?php
 session_start();
-require "conexion.php";
+include 'conexion.php';
 
-$numero = $_POST['numero_control'];
-$password = $_POST['password'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-$sql = "SELECT * FROM usuarios WHERE numero_control = ?";
-$stmt = $conn->prepare($sql);
-$stmt->execute([$numero]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $numero_control = $_POST['numero_control'];
+    $password = $_POST['password'];
 
-if (!$user) {
-    $_SESSION['error'] = "Número de control incorrecto.";
-    header("Location: index.php");
-    exit;
+    $sql = "SELECT * FROM usuarios WHERE numero_control = ? AND password = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ss", $numero_control, $password);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+
+    if ($resultado->num_rows > 0) {
+        $usuario = $resultado->fetch_assoc();
+
+        $_SESSION['numero_control'] = $usuario['numero_control'];
+        $_SESSION['rol'] = $usuario['rol'];
+
+        if ($usuario['rol'] === "alumno") {
+            header("Location: alumno.php");
+            exit();
+        } elseif ($usuario['rol'] === "maestro") {
+            header("Location: maestro.php");
+            exit();
+        }
+    } else {
+        $error = "Usuario o contraseña incorrectos";
+    }
 }
-
-if (!password_verify($password, $user['password'])) {
-    $_SESSION['error'] = "Contraseña incorrecta.";
-    header("Location: index.php");
-    exit;
-}
-
-// Guardamos datos de sesión
-$_SESSION['user_id'] = $user['id'];
-$_SESSION['rol'] = $user['rol'];
-$_SESSION['nombre'] = $user['nombre'];
-
-// Redirección según rol
-if ($user['rol'] == "alumno") {
-    header("Location: alumno/dashboard.php");
-} else {
-    header("Location: maestro/dashboard.php");
-}
-
-exit;
 ?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+
+<h2>Iniciar sesión</h2>
+
+<?php if (isset($error)) echo "<p style='color:red'>$error</p>"; ?>
+
+<form action="" method="POST">
+    <label>Número de control:</label>
+    <input type="text" name="numero_control" required><br><br>
+
+    <label>Contraseña:</label>
+    <input type="password" name="password" required><br><br>
+
+    <button type="submit">Ingresar</button>
+</form>
+
+</body>
+</html>
