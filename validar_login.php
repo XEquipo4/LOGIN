@@ -35,9 +35,9 @@ if ($password !== $user['password']) {
 }
 
 // GUARDAR DATOS EN SESIÓN
-$_SESSION['usuario'] = $user['nombre'];  // <<--- YA FUNCIONA PORQUE AGREGAMOS "nombre"
-$_SESSION['rol']     = $user['rol'];
-$_SESSION['numero_control'] = $user['numero_control'];
+$_SESSION['usuario']         = $user['numero_control']; 
+$_SESSION['rol']             = $user['rol'];
+$_SESSION['numero_control']  = $user['numero_control'];
 
 // REDIRECCIÓN SEGÚN ROL
 if ($user['rol'] === "alumno") {
