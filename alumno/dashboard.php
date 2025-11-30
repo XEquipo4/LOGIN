@@ -1,8 +1,9 @@
 <?php
 session_start();
-if ($_SESSION['rol'] !== 'alumno') {
-    header("Location: ../index.php"); exit;
+if (!isset($_SESSION['rol']) || $_SESSION['rol'] != 'alumno') {
+    header("Location: ../index.php");
+    exit;
 }
 ?>
-<h2>Bienvenido alumno: <?= $_SESSION['usuario'] ?></h2>
+<h1>Bienvenido Alumno: <?= $_SESSION['usuario']; ?></h1>
 <a href="../logout.php">Cerrar sesión</a>
