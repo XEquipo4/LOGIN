@@ -49,7 +49,7 @@ $numero = $_SESSION['numero_control'];
 
     <div class="table-container">
 
-        <h3 class="mb-4 text-center">📊 Calificaciones de <?= $nombre ?></h3>
+        <h3 class="mb-4 text-center">📊 Calificaciones de <?php echo $nombre; ?></h3>
 
         <table class="table table-hover text-center">
             <thead>
