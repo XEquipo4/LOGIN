@@ -6,7 +6,7 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] != 'alumno') {
     exit;
 }
 
-$nombre = $_SESSION['usuario'];
+$nombre = $_SESSION['nombre'];
 $numero = $_SESSION['numero_control'];
 ?>
 
