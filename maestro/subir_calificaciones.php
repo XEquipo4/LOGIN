@@ -6,7 +6,7 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] != 'maestro') {
     exit;
 }
 
-$nombre = $_SESSION['nombre'];
+$maestro = $_SESSION['nombre'];
 ?>
 
 <!DOCTYPE html>
@@ -17,12 +17,12 @@ $nombre = $_SESSION['nombre'];
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
     <style>
-        body { background-color: #eef2f8; }
-        .form-box {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        body {
+            background: #eef2f7;
+        }
+        .card {
+            border-radius: 12px;
+            padding: 20px;
         }
     </style>
 </head>
@@ -31,46 +31,33 @@ $nombre = $_SESSION['nombre'];
 
 <nav class="navbar navbar-dark" style="background-color:#0d6efd;">
     <div class="container-fluid">
-        <span class="navbar-brand">Subir Calificaciones</span>
+        <span class="navbar-brand">Panel Maestro</span>
         <a href="../logout.php" class="btn btn-light btn-sm">Cerrar sesión</a>
     </div>
 </nav>
 
 <div class="container mt-4">
 
-    <div class="form-box">
+    <h2 class="text-center fw-bold">📘 Subir Calificaciones</h2>
+    <p class="text-center text-secondary">Maestro: <b><?php echo $maestro; ?></b></p>
 
-        <h3 class="mb-4 text-center">📤 Registrar Calificaciones</h3>
+    <div class="card shadow col-md-6 mx-auto">
 
-        <form>
-            <div class="mb-3">
-                <label class="form-label">Número de Control del Alumno</label>
-                <input type="text" class="form-control" placeholder="Ej: A001" required>
-            </div>
+        <form action="subir_calificaciones_procesar.php" method="POST">
 
-            <div class="mb-3">
-                <label class="form-label">Materia</label>
-                <select class="form-select" required>
-                    <option value="">Seleccione una materia</option>
-                    <option>Matemáticas</option>
-                    <option>Programación</option>
-                    <option>Electricidad</option>
-                    <option>Redes</option>
-                </select>
-            </div>
+            <label class="fw-bold mt-2">Número de Control</label>
+            <input type="text" name="numero_control" class="form-control" required>
 
-            <div class="mb-3">
-                <label class="form-label">Calificación</label>
-                <input type="number" min="0" max="100" class="form-control" required>
-            </div>
+            <label class="fw-bold mt-3">Materia</label>
+            <input type="text" name="materia" class="form-control" required>
 
-            <button class="btn btn-primary w-100">Guardar</button>
+            <label class="fw-bold mt-3">Calificación</label>
+            <input type="number" name="calificacion" class="form-control" min="0" max="100" step="0.1" required>
+
+            <button class="btn btn-primary w-100 mt-4">Guardar Calificación</button>
         </form>
 
-        <a href="dashboard.php" class="btn btn-secondary mt-3">⬅ Regresar</a>
-
     </div>
-
 </div>
 
 </body>
