@@ -1,67 +1,72 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== "alumno") {
+if (!isset($_SESSION['rol']) || $_SESSION['rol'] != 'alumno') {
     header("Location: ../index.php");
     exit;
 }
 
-$usuario = $_SESSION['usuario'];
+$nombre = $_SESSION['nombre'];
+$numero = $_SESSION['numero_control'];
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Panel del Alumno</title>
+    <title>Dashboard Alumno</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
     <style>
         body {
-            margin: 0;
-            background: #1A73E8;
-            font-family: Arial;
-            color: #fff;
+            background-color: #f3f6fa;
         }
-
-        .container {
-            margin: 50px auto;
-            width: 80%;
-            max-width: 700px;
-            background: #ffffff;
-            color: #000;
-            padding: 25px;
+        .card-custom {
             border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-        }
-
-        h2 {
-            color: #1A73E8;
-        }
-
-        a.btn {
-            display: inline-block;
-            padding: 12px 18px;
-            background: #1A73E8;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            margin-top: 20px;
             transition: 0.3s;
         }
-
-        a.btn:hover {
-            background: #1259b1;
+        .card-custom:hover {
+            transform: scale(1.03);
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h2>Bienvenido Alumno</h2>
-    <p><strong>Usuario:</strong> <?= $usuario ?></p>
-    <p><strong>Rol:</strong> Alumno</p>
+<nav class="navbar navbar-dark" style="background-color:#0d6efd;">
+    <div class="container-fluid">
+        <span class="navbar-brand">Panel del Alumno</span>
+        <a href="../logout.php" class="btn btn-light btn-sm">Cerrar sesión</a>
+    </div>
+</nav>
 
-    <a href="../logout.php" class="btn">Cerrar sesión</a>
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Bienvenido, <?php echo $nombre; ?> 👋</h2>
+        <p class="text-secondary">Número de control: <b><?php echo $numero; ?></b></p>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-6 mb-3">
+            <a href="perfil.php" style="text-decoration:none;">
+                <div class="card card-custom shadow p-3">
+                    <h4 class="text-primary">📘 Mi Perfil</h4>
+                    <p>Ver la información de tu cuenta.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <a href="calificaciones.php" style="text-decoration:none;">
+                <div class="card card-custom shadow p-3">
+                    <h4 class="text-primary">📊 Calificaciones</h4>
+                    <p>Consulta tus materias y evaluación.</p>
+                </div>
+            </a>
+        </div>
+
+    </div>
 </div>
 
 </body>
