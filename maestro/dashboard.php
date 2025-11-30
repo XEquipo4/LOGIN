@@ -1,54 +1,68 @@
 <?php
 session_start();
+
 if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== "maestro") {
     header("Location: ../index.php");
-    exit();
+    exit;
 }
+
+$usuario = $_SESSION['usuario'];
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Maestro</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Panel del Maestro</title>
 
+    <style>
+        body {
+            margin: 0;
+            background: #1A73E8;
+            font-family: Arial;
+            color: #fff;
+        }
+
+        .container {
+            margin: 50px auto;
+            width: 80%;
+            max-width: 700px;
+            background: #ffffff;
+            color: #000;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            color: #1A73E8;
+        }
+
+        a.btn {
+            display: inline-block;
+            padding: 12px 18px;
+            background: #1A73E8;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        a.btn:hover {
+            background: #1259b1;
+        }
+    </style>
 </head>
+<body>
 
-<body class="bg-light">
+<div class="container">
+    <h2>Bienvenido Maestro</h2>
 
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid">
-        <span class="navbar-brand">Bienvenido Maestro: <?= $_SESSION['numero_control'] ?></span>
-        <a href="../logout.php" class="btn btn-outline-light">Cerrar sesión</a>
-    </div>
-</nav>
+    <p><strong>Usuario:</strong> <?= $usuario ?></p>
+    <p><strong>Rol:</strong> Maestro</p>
 
-<div class="container mt-4">
-
-    <div class="row g-4">
-        
-        <div class="col-md-4">
-            <div class="card shadow">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Subir Calificaciones</h5>
-                    <p>Envíe las notas de los alumnos.</p>
-                    <a href="subir_calificaciones.php" class="btn btn-dark">Entrar</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card shadow">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Mi Perfil</h5>
-                    <p>Información del maestro.</p>
-                    <a href="perfil.php" class="btn btn-dark">Ver</a>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
+    <a href="../logout.php" class="btn">Cerrar sesión</a>
 </div>
 
 </body>
