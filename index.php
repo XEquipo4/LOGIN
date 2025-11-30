@@ -1,81 +1,96 @@
-<?php session_start(); ?>
+<?php
+session_start();
+$error = isset($_SESSION['error']) ? $_SESSION['error'] : "";
+session_unset();
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <style>
         body {
-            background: #EAF3FF; /* azul claro */
-            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #1A73E8; /* Azul */
+            font-family: Arial, Helvetica, sans-serif;
+            display: flex;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
         }
 
-        .login-card {
-            background: #FFFFFF; /* blanco */
-            border-radius: 15px;
-            padding: 35px;
-            box-shadow: 0px 5px 20px rgba(0,0,0,0.15);
+        .login-box {
+            width: 360px;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            text-align: center;
         }
 
-        h3 {
-            color: #0D6EFD; /* azul principal */
-            font-weight: 700;
+        h2 {
+            margin-bottom: 20px;
+            color: #1A73E8;
         }
 
-        label {
-            font-weight: 600;
-            color: #000; /* negro */
+        input {
+            width: 92%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
         }
 
-        .btn-primary {
-            background: #0D6EFD;
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #1A73E8;
+            color: white;
             border: none;
-            font-weight: bold;
-            padding: 10px;
-            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-top: 12px;
+            transition: 0.3s;
         }
 
-        .btn-primary:hover {
-            background: #0954c7;
+        button:hover {
+            background: #1259b1;
+        }
+
+        .error {
+            background: #ffdddd;
+            color: #b30000;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
         }
     </style>
 
 </head>
-
 <body>
 
-<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
-    <div class="col-md-4">
+<div class="login-box">
+    <h2>Iniciar Sesión</h2>
 
-        <div class="login-card">
+    <?php if ($error): ?>
+        <div class="error"><?= $error ?></div>
+    <?php endif; ?>
 
-            <h3 class="text-center mb-4">Iniciar Sesión</h3>
+    <form action="validar_login.php" method="POST">
 
-            <?php if (isset($_SESSION['error'])): ?>
-            <div class="alert alert-danger">
-                <?= $_SESSION['error']; unset($_SESSION['error']); ?>
-            </div>
-            <?php endif; ?>
+        <input type="text" name="numero_control"
+               placeholder="Número de control" required>
 
-            <form action="validar_login.php" method="POST">
+        <input type="password" name="password"
+               placeholder="Contraseña" required>
 
-                <label>Número de Control</label>
-                <input type="text" name="numero_control" class="form-control mb-3" required>
-
-                <label>Contraseña</label>
-                <input type="password" name="password" class="form-control mb-4" required>
-
-                <button class="btn btn-primary w-100">Entrar</button>
-
-            </form>
-
-        </div>
-
-    </div>
+        <button type="submit">Entrar</button>
+    </form>
 </div>
 
 </body>

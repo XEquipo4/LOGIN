@@ -2,11 +2,18 @@
 session_start();
 require "conexion.php";
 
-$numero = $_POST['numero_control'];
-$password = $_POST['password'];
+if (!isset($_POST['numero_control'], $_POST['password'])) {
+    header("Location: index.php");
+    exit;
+}
 
+$numero = trim($_POST['numero_control']);
+$password = trim($_POST['password']);
+
+// Consulta segura
 $sql = "SELECT * FROM usuarios WHERE numero_control = ?";
-$stmt = sqlsrv_query($conn, $sql, array($numero));
+$params = array($numero);
+$stmt = sqlsrv_query($conn, $sql, $params);
 
 if ($stmt === false) {
     die(print_r(sqlsrv_errors(), true));
@@ -14,24 +21,32 @@ if ($stmt === false) {
 
 $user = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
+// VALIDACIONES
 if (!$user) {
     $_SESSION['error'] = "Usuario no encontrado";
     header("Location: index.php");
     exit;
 }
 
-if ($password != $user['password']) {
+if ($password !== $user['password']) {
     $_SESSION['error'] = "Contraseña incorrecta";
     header("Location: index.php");
     exit;
 }
 
-$_SESSION['usuario'] = $user['nombre'];
-$_SESSION['rol'] = $user['rol'];
+// GUARDAR DATOS EN SESIÓN
+$_SESSION['usuario'] = $user['nombre'];  // <<--- YA FUNCIONA PORQUE AGREGAMOS "nombre"
+$_SESSION['rol']     = $user['rol'];
+$_SESSION['numero_control'] = $user['numero_control'];
 
-if ($user['rol'] == "alumno") {
+// REDIRECCIÓN SEGÚN ROL
+if ($user['rol'] === "alumno") {
     header("Location: alumno/dashboard.php");
-} else {
+} else if ($user['rol'] === "maestro") {
     header("Location: maestro/dashboard.php");
+} else {
+    $_SESSION['error'] = "Rol no válido";
+    header("Location: index.php");
 }
+exit;
 ?>
