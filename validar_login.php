@@ -2,6 +2,7 @@
 session_start();
 require "conexion.php";
 
+// VALIDAR CAMPOS DEL FORM
 if (!isset($_POST['numero_control'], $_POST['password'])) {
     header("Location: index.php");
     exit;
@@ -10,25 +11,28 @@ if (!isset($_POST['numero_control'], $_POST['password'])) {
 $numero = trim($_POST['numero_control']);
 $password = trim($_POST['password']);
 
-// Consulta en SQL Server
-$sql = "SELECT * FROM usuarios WHERE numero_control = ?";
+// CONSULTA SEGURA
+$sql = "SELECT id, numero_control, nombre, password, rol 
+        FROM usuarios 
+        WHERE numero_control = ?";
 $params = array($numero);
 $stmt = sqlsrv_query($conn, $sql, $params);
 
+// ERROR EN CONSULTA
 if ($stmt === false) {
     die(print_r(sqlsrv_errors(), true));
 }
 
 $user = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
-// VALIDAR SI EXISTE EL USUARIO
+// SI NO EXISTE EL USUARIO
 if (!$user) {
     $_SESSION['error'] = "Usuario no encontrado";
     header("Location: index.php");
     exit;
 }
 
-// VALIDAR CONTRASEÑA SIN HASH (como lo pediste)
+// VALIDAR CONTRASEÑA SIN HASH
 if ($password !== $user['password']) {
     $_SESSION['error'] = "Contraseña incorrecta";
     header("Location: index.php");
@@ -41,13 +45,13 @@ $_SESSION['numero_control'] = $user['numero_control'];
 $_SESSION['nombre']         = $user['nombre'];
 $_SESSION['rol']            = $user['rol'];
 
-// REDIRECCIÓN SEGÚN ROL
+// REDIRECCIONAR SEGÚN ROL
 switch ($user['rol']) {
     case 'alumno':
         header("Location: alumno/dashboard.php");
         break;
 
-    case 'profesor':
+    case 'maestro':
         header("Location: maestro/dashboard.php");
         break;
 
