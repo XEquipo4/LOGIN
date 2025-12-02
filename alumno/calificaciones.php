@@ -8,14 +8,14 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'alumno') {
     exit;
 }
 
-$numero = $_SESSION['numero_control']; // viene del login
+$numero = $_SESSION['numero_control']; 
 $nombre = $_SESSION['nombre'];
 
 // Consultar calificaciones del alumno
-$sql = "SELECT m.nombre AS materia, c.calificacion
-        FROM calificaciones c
-        INNER JOIN materias m ON c.id_materia = m.id
-        INNER JOIN alumnos a ON c.id_alumno = a.id_alumno
+$sql = "SELECT m.nombre AS materia, am.calificacion
+        FROM alumno_materia am
+        INNER JOIN materias m ON am.materia_id = m.id
+        INNER JOIN alumnos a ON am.alumno_id = a.id_alumno
         WHERE a.numero_control = ?";
 
 $params = array($numero);
@@ -25,8 +25,6 @@ if ($stmt === false) {
     die(print_r(sqlsrv_errors(), true));
 }
 ?>
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
