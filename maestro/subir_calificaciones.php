@@ -1,59 +1,85 @@
 <?php
 session_start();
-require "../conexion.php";
-if(!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'maestro') header("Location: ../index.php");
-
-// Obtener alumnos y materias para subir calificaciones
-$alumnos = sqlsrv_query($conn, "SELECT id, nombre FROM usuarios WHERE rol='alumno'");
-$materias = sqlsrv_query($conn, "SELECT id, nombre FROM materias");
-
-// Procesar formulario
-if($_SERVER['REQUEST_METHOD'] === 'POST'){
-    $id_alumno = $_POST['alumno'];
-    $id_materia = $_POST['materia'];
-    $calificacion = $_POST['calificacion'];
-
-    $sql = "INSERT INTO calificaciones (id_alumno, id_materia, calificacion)
-            VALUES (?, ?, ?)";
-    sqlsrv_query($conn, $sql, array($id_alumno, $id_materia, $calificacion));
-    header("Location: subir_calificaciones.php");
+if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'maestro') {
+    header("Location: ../index.php");
     exit;
 }
-?>
 
+require "../conexion.php";
+
+// Obtener materias
+$sql = "SELECT * FROM materias";
+$materias = sqlsrv_query($conn, $sql);
+
+$materia_id = isset($_GET['materia']) ? intval($_GET['materia']) : 0;
+$alumnos = null;
+
+if ($materia_id > 0) {
+    $sql2 = "SELECT am.id, a.nombre, a.numero_control, am.calificacion
+             FROM alumno_materia am
+             INNER JOIN alumnos a ON am.alumno_id = a.id_alumno
+             WHERE am.materia_id = ?";
+    
+    $alumnos = sqlsrv_query($conn, $sql2, array($materia_id));
+}
+?>
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Subir Calificaciones</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <title>Subir Calificaciones</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
 <body>
+
 <div class="container mt-4">
-<h2>Subir Calificaciones</h2>
-<form method="POST">
-<div class="mb-3">
-    <label>Alumno</label>
-    <select name="alumno" class="form-control" required>
-        <?php while($a = sqlsrv_fetch_array($alumnos, SQLSRV_FETCH_ASSOC)): ?>
-            <option value="<?= $a['id'] ?>"><?= $a['nombre'] ?></option>
-        <?php endwhile; ?>
-    </select>
-</div>
-<div class="mb-3">
-    <label>Materia</label>
-    <select name="materia" class="form-control" required>
-        <?php while($m = sqlsrv_fetch_array($materias, SQLSRV_FETCH_ASSOC)): ?>
-            <option value="<?= $m['id'] ?>"><?= $m['nombre'] ?></option>
-        <?php endwhile; ?>
-    </select>
-</div>
-<div class="mb-3">
-    <label>Calificación</label>
-    <input type="number" step="0.01" name="calificacion" class="form-control" required>
-</div>
-<button class="btn btn-primary">Guardar</button>
-</form>
+
+    <h2>Subir Calificaciones</h2>
+
+    <!-- Seleccionar materia -->
+    <form method="get">
+        <select name="materia" class="form-control w-50 mb-3" onchange="this.form.submit()">
+            <option value="">Seleccione una materia</option>
+            <?php while ($m = sqlsrv_fetch_array($materias, SQLSRV_FETCH_ASSOC)) : ?>
+                <option value="<?= $m['id'] ?>" <?= $materia_id == $m['id'] ? "selected" : "" ?>>
+                    <?= $m['nombre'] ?>
+                </option>
+            <?php endwhile; ?>
+        </select>
+    </form>
+
+    <?php if ($materia_id > 0 && $alumnos) : ?>
+
+        <form action="guardar_calificacion.php" method="post">
+            <input type="hidden" name="materia_id" value="<?= $materia_id ?>">
+
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Alumno</th>
+                        <th>Número Control</th>
+                        <th>Calificación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($a = sqlsrv_fetch_array($alumnos, SQLSRV_FETCH_ASSOC)) : ?>
+                        <tr>
+                            <td><?= $a['nombre'] ?></td>
+                            <td><?= $a['numero_control'] ?></td>
+                            <td>
+                                <input type="number" name="calificacion[<?= $a['id'] ?>]"
+                                       min="0" max="100" value="<?= $a['calificacion'] ?>"
+                                       class="form-control">
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+
+            <button class="btn btn-success">Guardar Calificaciones</button>
+        </form>
+
+    <?php endif; ?>
 </div>
 </body>
 </html>
