@@ -53,7 +53,7 @@ $numero = $_SESSION['numero_control'];
         </div>
 
         <!-- Calificaciones -->
-        <div class="col-md-6 mb-3">
+        <div es col-md-6 mb-3">
             <a href="calificaciones.php" style="text-decoration:none;">
                 <div class="card card-custom shadow p-3">
                     <h4 class="text-primary">📊 Calificaciones</h4>
