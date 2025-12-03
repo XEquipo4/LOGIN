@@ -2,15 +2,28 @@
 session_start();
 require "../conexion.php";
 
-$materia_id = intval($_POST['materia_id']);
-$calificaciones = $_POST['calificacion'];
-
-foreach ($calificaciones as $id_relacion => $cal) {
-
-    $sql = "UPDATE alumno_materia SET calificacion = ? WHERE id = ?";
-    sqlsrv_query($conn, $sql, array($cal, $id_relacion));
+if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'maestro') {
+    header("Location: ../index.php");
+    exit;
 }
 
-header("Location: subir_calificaciones.php?materia=$materia_id");
+if (!isset($_POST['calificaciones'])) {
+    header("Location: subir_calificaciones.php");
+    exit;
+}
+
+foreach ($_POST['calificaciones'] as $id_asignacion => $calificacion) {
+
+    $sql = "
+        UPDATE materias_asignadas
+        SET calificacion = ?
+        WHERE id = ?
+    ";
+
+    $params = array($calificacion, $id_asignacion);
+    sqlsrv_query($conn, $sql, $params);
+}
+
+$_SESSION['success'] = "Calificaciones actualizadas correctamente";
+header("Location: subir_calificaciones.php");
 exit;
-?>
