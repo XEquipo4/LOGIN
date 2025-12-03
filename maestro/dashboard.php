@@ -55,7 +55,7 @@ $numero = $_SESSION['numero_control'];
             <a href="alumnos.php" class="text-decoration-none">
                 <div class="card shadow card-custom">
                     <h4 class="title">👥 Gestión de Alumnos</h4>
-                    <p>Registrar y administrar a los alumnos.</p>
+                    <p> Administrar a los alumnos.</p>
                 </div>
             </a>
         </div>
