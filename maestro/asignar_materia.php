@@ -1,24 +1,41 @@
 <?php
+session_start();
 include "conexion.php";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if (!isset($_SESSION['rol']) || $_SESSION['rol'] != "maestro") {
+    header("Location: index.php");
+    exit;
+}
 
-    $alumno_id = $_POST['alumno_id'];
-    $materia_id = $_POST['materia_id'];
-    $calificacion = $_POST['calificacion'];
+// RECIBIR DATOS DEL FORMULARIO
+$alumno_id = $_POST['alumno_id'];
+$materia_id = $_POST['materia_id'];
+$calificacion = !empty($_POST['calificacion']) ? $_POST['calificacion'] : null;
 
-    // EVITAR SQL INJECTION
-    $alumno_id = $conn->real_escape_string($alumno_id);
-    $materia_id = $conn->real_escape_string($materia_id);
-    $calificacion = $conn->real_escape_string($calificacion);
+// VALIDAR QUE NO EXISTA YA LA ASIGNACIÓN (EVITAR DUPLICADOS)
+$check = $conn->prepare("SELECT id FROM alumno_materia WHERE alumno_id = ? AND materia_id = ?");
+$check->bind_param("ii", $alumno_id, $materia_id);
+$check->execute();
+$check->store_result();
 
-    $sql = "INSERT INTO materias_asignadas (alumno_id, materia_id, calificacion)
-            VALUES ('$alumno_id', '$materia_id', '$calificacion')";
+if ($check->num_rows > 0) {
+    echo "<script>
+        alert('Este alumno ya tiene asignada esta materia.');
+        window.location.href = 'asignar_materia_form.php';
+    </script>";
+    exit;
+}
 
-    if ($conn->query($sql) === TRUE) {
-        echo "<script>alert('Materia asignada correctamente'); window.location='form_asignar_materia.php';</script>";
-    } else {
-        echo "Error: " . $conn->error;
-    }
+// INSERTAR LA ASIGNACIÓN
+$sql = $conn->prepare("INSERT INTO alumno_materia (alumno_id, materia_id, calificacion) VALUES (?, ?, ?)");
+$sql->bind_param("iii", $alumno_id, $materia_id, $calificacion);
+
+if ($sql->execute()) {
+    echo "<script>
+        alert('Materia asignada correctamente.');
+        window.location.href = 'asignar_materia_form.php';
+    </script>";
+} else {
+    echo "Error: " . $conn->error;
 }
 ?>
