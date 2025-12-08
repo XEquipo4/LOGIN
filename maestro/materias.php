@@ -37,7 +37,7 @@ $materias = sqlsrv_query($conn, "SELECT * FROM materias ORDER BY id DESC");
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="fw-bold text-primary">Materias Registradas</h3>
-        <a href="asignar_materia.php" class="btn btn-success">+ Crear Materia</a>
+        <a href="../asignar_materia.php" class="btn btn-success">+ Crear Materia</a>
     </div>
 
     <table class="table table-bordered table-hover shadow">
