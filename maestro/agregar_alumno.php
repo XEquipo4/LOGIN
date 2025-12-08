@@ -4,6 +4,12 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'maestro') {
     header("Location: ../index.php");
     exit;
 }
+
+require "../conexion.php";
+
+// Obtener usuarios con rol alumno
+$sql = "SELECT id, numero_control, nombre FROM usuario WHERE rol = 'alumno'";
+$usuarios = sqlsrv_query($conn, $sql);
 ?>
 
 <!DOCTYPE html>
@@ -22,13 +28,30 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'maestro') {
     <form action="guardar_alumno.php" method="post">
 
         <div class="mb-3">
+            <label>Seleccionar Usuario (Alumno):</label>
+            <select name="usuario_id" id="usuario_id" class="form-select" required>
+                <option value="">Seleccione un usuario...</option>
+
+                <?php while ($u = sqlsrv_fetch_array($usuarios, SQLSRV_FETCH_ASSOC)) : ?>
+                    <option 
+                        value="<?= $u['id'] ?>" 
+                        data-numero="<?= $u['numero_control'] ?>"
+                        data-nombre="<?= $u['nombre'] ?>"
+                    >
+                        <?= $u['numero_control'] ?> - <?= $u['nombre'] ?>
+                    </option>
+                <?php endwhile; ?>
+            </select>
+        </div>
+
+        <div class="mb-3">
             <label>Número de Control:</label>
-            <input type="text" name="numero_control" class="form-control" required>
+            <input type="text" id="numero_control" name="numero_control" class="form-control" readonly required>
         </div>
 
         <div class="mb-3">
             <label>Nombre Completo:</label>
-            <input type="text" name="nombre" class="form-control" required>
+            <input type="text" id="nombre" name="nombre" class="form-control" readonly required>
         </div>
 
         <button type="submit" class="btn btn-success">Guardar Alumno</button>
@@ -36,6 +59,16 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'maestro') {
     </form>
 
 </div>
+
+<script>
+// Rellenar los inputs cuando se seleccione un usuario
+document.getElementById("usuario_id").addEventListener("change", function() {
+    let option = this.options[this.selectedIndex];
+
+    document.getElementById("numero_control").value = option.getAttribute("data-numero");
+    document.getElementById("nombre").value = option.getAttribute("data-nombre");
+});
+</script>
 
 </body>
 </html>
