@@ -1,41 +1,79 @@
 <?php
 session_start();
-include "conexion.php";
-
-if (!isset($_SESSION['rol']) || $_SESSION['rol'] != "maestro") {
-    header("Location: index.php");
+if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'maestro') {
+    header("Location: ../index.php");
     exit;
 }
 
-// RECIBIR DATOS DEL FORMULARIO
-$alumno_id = $_POST['alumno_id'];
-$materia_id = $_POST['materia_id'];
-$calificacion = !empty($_POST['calificacion']) ? $_POST['calificacion'] : null;
+require "../conexion.php";
 
-// VALIDAR QUE NO EXISTA YA LA ASIGNACIÓN (EVITAR DUPLICADOS)
-$check = $conn->prepare("SELECT id FROM alumno_materia WHERE alumno_id = ? AND materia_id = ?");
-$check->bind_param("ii", $alumno_id, $materia_id);
-$check->execute();
-$check->store_result();
+$alumno_id = $_GET['id'];
 
-if ($check->num_rows > 0) {
-    echo "<script>
-        alert('Este alumno ya tiene asignada esta materia.');
-        window.location.href = 'asignar_materia_form.php';
-    </script>";
-    exit;
-}
+// Obtener datos del alumno
+$sqlAlumno = "SELECT * FROM alumnos WHERE id_alumno = ?";
+$stmtAlumno = sqlsrv_query($conn, $sqlAlumno, array($alumno_id));
+$alumno = sqlsrv_fetch_array($stmtAlumno, SQLSRV_FETCH_ASSOC);
 
-// INSERTAR LA ASIGNACIÓN
-$sql = $conn->prepare("INSERT INTO alumno_materia (alumno_id, materia_id, calificacion) VALUES (?, ?, ?)");
-$sql->bind_param("iii", $alumno_id, $materia_id, $calificacion);
+// Obtener materias disponibles
+$sqlMaterias = "SELECT * FROM materias ORDER BY nombre ASC";
+$stmtMaterias = sqlsrv_query($conn, $sqlMaterias);
 
-if ($sql->execute()) {
-    echo "<script>
-        alert('Materia asignada correctamente.');
-        window.location.href = 'asignar_materia_form.php';
-    </script>";
-} else {
-    echo "Error: " . $conn->error;
+$mensaje = "";
+
+// Guardar asignación
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $materia_id = $_POST['materia_id'];
+
+    // Validar que no exista ya la asignación
+    $validacion = sqlsrv_query($conn,
+        "SELECT * FROM alumno_materia WHERE alumno_id = ? AND materia_id = ?",
+        array($alumno_id, $materia_id)
+    );
+
+    if (sqlsrv_has_rows($validacion)) {
+        $mensaje = '<div class="alert alert-warning">Esta materia ya está asignada.</div>';
+    } else {
+        $query = "INSERT INTO alumno_materia (alumno_id, materia_id) VALUES (?, ?)";
+        if (sqlsrv_query($conn, $query, array($alumno_id, $materia_id))) {
+            $mensaje = '<div class="alert alert-success">Materia asignada correctamente.</div>';
+        } else {
+            $mensaje = '<div class="alert alert-danger">Error al asignar materia.</div>';
+        }
+    }
 }
 ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Asignar Materias</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-4">
+
+    <h2>Asignar Materia a: <?= $alumno['nombre'] ?></h2>
+
+    <?= $mensaje ?>
+
+    <form method="POST">
+
+        <div class="mb-3">
+            <label class="form-label">Seleccionar Materia</label>
+            <select name="materia_id" class="form-select" required>
+                <option value="">-- Seleccionar --</option>
+                <?php while ($m = sqlsrv_fetch_array($stmtMaterias, SQLSRV_FETCH_ASSOC)) : ?>
+                    <option value="<?= $m['id'] ?>"><?= $m['nombre'] ?> (<?= $m['carrera'] ?>)</option>
+                <?php endwhile; ?>
+            </select>
+        </div>
+
+        <button class="btn btn-primary">Asignar</button>
+        <a href="alumnos.php" class="btn btn-secondary">Volver</a>
+    </form>
+
+</div>
+
+</body>
+</html>

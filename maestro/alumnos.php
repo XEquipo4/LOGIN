@@ -32,6 +32,7 @@ $stmt = sqlsrv_query($conn, $sql);
                 <th>Número Control</th>
                 <th>Nombre</th>
                 <th>Fecha Registro</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -41,6 +42,16 @@ $stmt = sqlsrv_query($conn, $sql);
                     <td><?= $a['numero_control'] ?></td>
                     <td><?= $a['nombre'] ?></td>
                     <td><?= $a['fecha_registro']->format("Y-m-d") ?></td>
+
+                    <td>
+                        <a href="asignar_materias.php?id=<?= $a['id_alumno'] ?>" class="btn btn-success btn-sm">
+                            Asignar Materias
+                        </a>
+
+                        <a href="materias_asignadas.php?id=<?= $a['id_alumno'] ?>" class="btn btn-info btn-sm">
+                            Ver Materias
+                        </a>
+                    </td>
                 </tr>
             <?php endwhile; ?>
         </tbody>

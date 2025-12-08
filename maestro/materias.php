@@ -45,7 +45,7 @@ $materias = sqlsrv_query($conn, "SELECT * FROM materias ORDER BY id DESC");
             <tr>
                 <th>Nombre</th>
                 <th>Clave</th>
-                <th>Descripción</th>
+                <th>Carrera</th>
                 <th width="180">Acciones</th>
             </tr>
         </thead>
@@ -54,7 +54,8 @@ $materias = sqlsrv_query($conn, "SELECT * FROM materias ORDER BY id DESC");
             <tr>
                 <td><?= $m['nombre'] ?></td>
                 <td><?= $m['clave'] ?></td>
-                <td><?= $m['descripcion'] ?></td>
+                <td><?= $m['carrera'] ?></td>
+                <!--
                 <td>
                     <a href="editar_materia.php?id=<?= $m['id'] ?>" class="btn btn-warning btn-sm">Editar</a>
                     <a href="eliminar_materia.php?id=<?= $m['id'] ?>"
@@ -63,6 +64,7 @@ $materias = sqlsrv_query($conn, "SELECT * FROM materias ORDER BY id DESC");
                        Eliminar
                     </a>
                 </td>
+                -->
             </tr>
             <?php endwhile; ?>
         </tbody>
