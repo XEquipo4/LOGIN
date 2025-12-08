@@ -39,7 +39,7 @@ if(!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'maestro'){
         </div>
 
         <button type="submit" class="btn btn-primary">Guardar Materia</button>
-        <a href="dashboard_maestro.php" class="btn btn-secondary">Regresar</a>
+        <a href="dashboard.php" class="btn btn-secondary">Regresar</a>
     </form>
 </div>
 
