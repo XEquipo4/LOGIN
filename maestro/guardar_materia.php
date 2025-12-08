@@ -19,12 +19,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Generar clave automática: ej. MAT-A83FZ
+    // Generar clave automática tipo MAT-X8GQ2
     $clave = "MAT-" . strtoupper(substr(md5(uniqid()), 0, 5));
 
-    // Query SQL Server
     $sql = "INSERT INTO materias (nombre, carrera, clave) VALUES (?, ?, ?)";
-    $params = array($nombre, $carrera, $clave);
+    $params = [$nombre, $carrera, $clave];
     $stmt = sqlsrv_query($conn, $sql, $params);
 
     if ($stmt === false) {

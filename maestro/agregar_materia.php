@@ -21,6 +21,24 @@ if(!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'maestro'){
 <div class="container mt-4">
     <h2>Registrar Nueva Materia</h2>
 
+    <!-- ALERTAS -->
+    <?php if (isset($_SESSION['success'])): ?>
+        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            <?= $_SESSION['success']; ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php unset($_SESSION['success']); ?>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            <?= $_SESSION['error']; ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+    <!-- FIN ALERTAS -->
+
     <form action="guardar_materia.php" method="POST" class="mt-3">
 
         <div class="mb-3">
@@ -38,5 +56,6 @@ if(!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'maestro'){
     </form>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
