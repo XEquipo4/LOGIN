@@ -4,12 +4,6 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'maestro') {
     header("Location: ../index.php");
     exit;
 }
-
-require "../conexion.php";
-
-// Obtener materias
-$sql = "SELECT * FROM materias";
-$stmt = sqlsrv_query($conn, $sql);
 ?>
 
 <!DOCTYPE html>
@@ -33,21 +27,12 @@ $stmt = sqlsrv_query($conn, $sql);
         </div>
 
         <div class="mb-3">
-            <label>Nombre:</label>
+            <label>Nombre Completo:</label>
             <input type="text" name="nombre" class="form-control" required>
         </div>
 
-        <div class="mb-3">
-            <label>Asignar a Materia:</label>
-            <select name="materia_id" class="form-control" required>
-                <option value="">Seleccione una materia</option>
-                <?php while ($m = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) : ?>
-                    <option value="<?= $m['id'] ?>"><?= $m['nombre'] ?></option>
-                <?php endwhile; ?>
-            </select>
-        </div>
-
         <button type="submit" class="btn btn-success">Guardar Alumno</button>
+
     </form>
 
 </div>
