@@ -7,9 +7,9 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'maestro') {
 
 require "../conexion.php";
 
-// Obtener usuarios con rol alumno
-$sql = "SELECT id, numero_control, nombre FROM usuario WHERE rol = 'alumno'";
-$usuarios = sqlsrv_query($conn, $sql);
+// Obtener usuarios que tienen rol alumno
+$sql = "SELECT id, numero_control, nombre FROM usuarios WHERE rol = 'alumno'";
+$stmt = sqlsrv_query($conn, $sql);
 ?>
 
 <!DOCTYPE html>
@@ -27,14 +27,15 @@ $usuarios = sqlsrv_query($conn, $sql);
 
     <form action="guardar_alumno.php" method="post">
 
+        <!-- SELECT DE USUARIOS (ALUMNOS) -->
         <div class="mb-3">
             <label>Seleccionar Usuario (Alumno):</label>
             <select name="usuario_id" id="usuario_id" class="form-select" required>
-                <option value="">Seleccione un usuario...</option>
+                <option value="">Seleccione un alumno...</option>
 
-                <?php while ($u = sqlsrv_fetch_array($usuarios, SQLSRV_FETCH_ASSOC)) : ?>
+                <?php while ($u = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) : ?>
                     <option 
-                        value="<?= $u['id'] ?>" 
+                        value="<?= $u['id'] ?>"
                         data-numero="<?= $u['numero_control'] ?>"
                         data-nombre="<?= $u['nombre'] ?>"
                     >
@@ -44,6 +45,7 @@ $usuarios = sqlsrv_query($conn, $sql);
             </select>
         </div>
 
+        <!-- CAMPOS AUTOMÁTICOS -->
         <div class="mb-3">
             <label>Número de Control:</label>
             <input type="text" id="numero_control" name="numero_control" class="form-control" readonly required>
@@ -60,8 +62,8 @@ $usuarios = sqlsrv_query($conn, $sql);
 
 </div>
 
+<!-- Script para rellenar automáticamente -->
 <script>
-// Rellenar los inputs cuando se seleccione un usuario
 document.getElementById("usuario_id").addEventListener("change", function() {
     let option = this.options[this.selectedIndex];
 
