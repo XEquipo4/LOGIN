@@ -29,13 +29,8 @@ if(!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'maestro'){
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Clave:</label>
-            <input type="text" name="clave" required class="form-control">
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Descripción:</label>
-            <textarea name="descripcion" class="form-control"></textarea>
+            <label class="form-label">Carrera:</label>
+            <input type="text" name="carrera" required class="form-control">
         </div>
 
         <button type="submit" class="btn btn-primary">Guardar Materia</button>

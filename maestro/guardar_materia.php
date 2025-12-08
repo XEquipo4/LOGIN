@@ -8,32 +8,33 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'maestro') {
     exit;
 }
 
-// Obtener datos del formulario
-$nombre = $_POST['nombre'];
-$clave = $_POST['clave'];
-$descripcion = $_POST['descripcion'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-// Validación simple
-if (empty($nombre) || empty($clave)) {
-    echo "<script>alert('El nombre y la clave son obligatorios.'); history.back();</script>";
+    $nombre = trim($_POST["nombre"]);
+    $carrera = trim($_POST["carrera"]);
+
+    if (empty($nombre) || empty($carrera)) {
+        $_SESSION['error'] = "Todos los campos son obligatorios.";
+        header("Location: agregar_materia.php");
+        exit;
+    }
+
+    // Generar clave automática: ej. MAT-A83FZ
+    $clave = "MAT-" . strtoupper(substr(md5(uniqid()), 0, 5));
+
+    // Query SQL Server
+    $sql = "INSERT INTO materias (nombre, carrera, clave) VALUES (?, ?, ?)";
+    $params = array($nombre, $carrera, $clave);
+    $stmt = sqlsrv_query($conn, $sql, $params);
+
+    if ($stmt === false) {
+        $_SESSION['error'] = "Error al guardar la materia: " . print_r(sqlsrv_errors(), true);
+        header("Location: agregar_materia.php");
+        exit;
+    }
+
+    $_SESSION['success'] = "Materia creada correctamente. Clave generada: $clave";
+    header("Location: agregar_materia.php");
     exit;
-}
-
-// Query para insertar en la tabla materias
-$sql = "INSERT INTO materias (nombre, clave, descripcion) VALUES (?, ?, ?)";
-$params = array($nombre, $clave, $descripcion);
-
-// Ejecutar consulta
-$stmt = sqlsrv_query($conn, $sql, $params);
-
-if ($stmt) {
-    echo "<script>
-            alert('Materia registrada correctamente');
-            window.location = 'materias.php';
-          </script>";
-} else {
-    echo "<pre>Error al guardar la materia.\n";
-    print_r(sqlsrv_errors());
-    echo "</pre>";
 }
 ?>
